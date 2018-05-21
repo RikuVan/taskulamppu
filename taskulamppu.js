@@ -97,7 +97,7 @@ function validate(schema, obj, prop, val) {
 
 /*------------------ COMPUTED --------------------*/
 
-function createComputation(target, thisArg, argsList) {
+function createComputation(target, thisArg, argsList, proxy) {
   return (fn = null) => {
     // add function to stack when its property getters are called
     compStack.unshift(proxy)
@@ -110,7 +110,7 @@ function createComputation(target, thisArg, argsList) {
 export function computed(fn, { autorun = true, async = false } = {}) {
   const proxy = new Proxy(fn, {
     apply(target, thisArg, argsList) {
-      const doComputation = createComputation(target, thisArg, argsList)
+      const doComputation = createComputation(target, thisArg, argsList, proxy)
       // if case compute function should be async to, e.g., support computing after a promise resolves
       // we inject a callback
       // computed(({computeSync}) => {
